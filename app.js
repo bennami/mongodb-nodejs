@@ -34,6 +34,51 @@ const dbName = 'circulation';
        const limitData = await circulationRepo.get({},3);
        assert.strictEqual(limitData.length, 3);
 
+       //get by id
+       const id = getData[4]._id.toString();
+       const byId = await circulationRepo.getById(id);
+       assert.deepStrictEqual(byId, getData[4]);
+
+
+       //add item
+       const newItem =  {
+          "Newspaper": "Imane's paper",
+          "Daily Circulation, 2004": 235369,
+          "Daily Circulation, 2013": 1344070,
+          "Change in Daily Circulation, 2004-2013": -30,
+          "Pulitzer Prize Winners and Finalists, 1990-2003": 4,
+          "Pulitzer Prize Winners and Finalists, 2004-2014": 2,
+          "Pulitzer Prize Winners and Finalists, 1990-2014": 7
+       };
+       const addedItem = await circulationRepo.add(newItem);
+       assert(addedItem._id);
+       // pull the added item with a query to make sure its there
+       const addedItemQuery = await  circulationRepo.getById(addedItem._id);
+       assert.deepStrictEqual(addedItemQuery, newItem);
+
+       //update item
+       const updatedItem = await circulationRepo.update(addedItem._id, {
+          "Newspaper": "My new paper",
+          "Daily Circulation, 2004": 235369,
+          "Daily Circulation, 2013": 1344070,
+          "Change in Daily Circulation, 2004-2013": -30,
+          "Pulitzer Prize Winners and Finalists, 1990-2003": 4,
+          "Pulitzer Prize Winners and Finalists, 2004-2014": 2,
+          "Pulitzer Prize Winners and Finalists, 1990-2014": 7
+
+       });
+       assert.strictEqual(updatedItem.Newspaper, "My new paper");
+
+       const newAddedItemQuery = await  circulationRepo.getById(addedItem._id);
+       assert.strictEqual(newAddedItemQuery.Newspaper, "My new paper");
+
+       //delete
+       const removed = await circulationRepo.remove(addedItem._id);
+       assert(removed);
+       const deletedItem = await  circulationRepo.getById(addedItem._id);
+       assert.strictEqual(deletedItem,null)
+
+
 
     }catch (error) {
        console.log(error)
