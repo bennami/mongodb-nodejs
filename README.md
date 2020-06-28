@@ -1,10 +1,10 @@
 # mongodb-nodejs - ubuntu 20.04
 
 ## install mongodb
--By default, the latest version of MongoDB is not available in the Ubuntu 20.04 default repository.
+ By default, the latest version of MongoDB is not available in the Ubuntu 20.04 default repository.
  So you will need to add the official MongoDB repository in your system.
  
- First, install Gnupg package with the following command:
+ First, install Gnupg package with the following command(you can also choose to do it via the mongodb site):
  
  ```
  apt-get install gnupg -y
