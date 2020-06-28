@@ -7,6 +7,26 @@ const url = 'mongodb://localhost:27017';
 const dbName = 'circulation';
 
 function circulationRepo(){
+    function get(){
+        return new Promise(async (resolve, reject)=>{
+            const client = new MongoClient(url);
+            try {
+                await client.connect();
+                const db = client.db(dbName);
+
+                //this returns a cursor, doesnt hit db
+                const items = db.collection('newspapers').find();
+
+                //this returns arrays and hits the db
+                resolve(await items.toArray());
+                client.close();
+
+            }catch (e) {
+                reject(e)
+
+            }
+        })
+    }
     function loadData(data){
       return new Promise(async(resolve, reject) => {
           const client = new MongoClient(url);
@@ -16,12 +36,13 @@ function circulationRepo(){
 
               results = db.collection('newspapers').insertMany(data)
               resolve(results);
+              client.close();
           }catch (error){
               reject(error)
           }
       })
     }
-    return{loadData}
+    return{loadData, get}
 }
 
 module.exports = circulationRepo();
