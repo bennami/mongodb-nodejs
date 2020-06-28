@@ -2,12 +2,11 @@ const {MongoClient} = require('mongodb');
 
 //locally
 const url = 'mongodb://localhost:27017';
-
 //name of db we create
 const dbName = 'circulation';
 
 function circulationRepo(){
-    function get(){
+    function get(query, limit){
         return new Promise(async (resolve, reject)=>{
             const client = new MongoClient(url);
             try {
@@ -15,7 +14,12 @@ function circulationRepo(){
                 const db = client.db(dbName);
 
                 //this returns a cursor, doesnt hit db
-                const items = db.collection('newspapers').find();
+                let items = db.collection('newspapers').find(query);
+
+                //this is how to add the limit to a query
+                if (limit > 0){
+                    items = items.limit(limit);
+                }
 
                 //this returns arrays and hits the db
                 resolve(await items.toArray());
