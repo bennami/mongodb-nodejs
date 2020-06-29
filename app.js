@@ -12,7 +12,7 @@ const dbName = 'circulation';
 //admin commands to see what we can do
  async function main(){
     //open up a client, takes a url as a param
-    const client = new MongoClient(url);
+    const client = new MongoClient(url,  { useUnifiedTopology: true });
 
     //wait until client.connect returns the promise to proceed
     await client.connect();
@@ -59,9 +59,9 @@ const dbName = 'circulation';
        //update item
        const updatedItem = await circulationRepo.update(addedItem._id, {
           "Newspaper": "My new paper",
-          "Daily Circulation, 2004": 235369,
-          "Daily Circulation, 2013": 1344070,
-          "Change in Daily Circulation, 2004-2013": -30,
+          "Daily Circulation, 2004": 1,
+          "Daily Circulation, 2013": 2,
+          "Change in Daily Circulation, 2004-2013": 100,
           "Pulitzer Prize Winners and Finalists, 1990-2003": 4,
           "Pulitzer Prize Winners and Finalists, 2004-2014": 2,
           "Pulitzer Prize Winners and Finalists, 1990-2014": 7
@@ -78,8 +78,13 @@ const dbName = 'circulation';
        const deletedItem = await  circulationRepo.getById(addedItem._id);
        assert.strictEqual(deletedItem,null)
 
+       //avg aggregation pipeline
+       const avgFinalists = await circulationRepo.averageFinalists();
+       console.log(`avg number of finalists is ${avgFinalists}`);
 
-
+       //avg by change
+       const avgByChange = await circulationRepo.averageFinalistsByChange();
+       console.log(avgByChange);
     }catch (error) {
        console.log(error)
     }finally{
